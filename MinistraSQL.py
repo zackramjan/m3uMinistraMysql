@@ -43,8 +43,9 @@ class MinistraSQL(object):
         self.myCon.commit()
 
     def checkInsertGenre(self,genre):
-        query = "INSERT IGNORE INTO tv_genre (title) VALUES (%s)"
-        values = (genre,)
+        maxGen = self.getMaxGenre()
+        query = "INSERT IGNORE INTO tv_genre (title,number) VALUES (%s,%s)"
+        values = (genre,maxGen)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         self.myCon.commit()
@@ -60,6 +61,13 @@ class MinistraSQL(object):
     
     def getMaxChannel(self):
         query = "select max(number) as max from itv"
+        cursor = self.myCon.cursor()
+        cursor.execute(query)
+        res = cursor.fetchone()   
+        return res[0] + 1;
+    
+    def getMaxGenre(self):
+        query = "select max(number) as max from tv_genre"
         cursor = self.myCon.cursor()
         cursor.execute(query)
         res = cursor.fetchone()   
