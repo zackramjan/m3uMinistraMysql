@@ -9,19 +9,16 @@ import os
 import mysql.connector
 
 import M3uParser
+import MinistraSQL
 
 def main(argv=None): 
-    myM3u = M3uParser();
+    myM3u = M3uParser.M3uParser();
     myM3u.readM3u(sys.argv[1])
+    sql = MinistraSQL.MinistraSQL("username","password","localhost") 
     for i in myM3u.getList():
-        s = i["title"] + " ^ " + i["tvg-name"] + " ^ " + i["tvg-ID"] + " ^ " + i["tvg-group"] + " ^ " + i["link"]
-        sys.stderr.write(s + "\n")
-    
-    
-    
-    
-    
-
+        sys.stderr.write(i["title"] + " ^ " + i["tvg-name"] + " ^ " + i["tvg-ID"] + " ^ " + i["tvg-group"] + " ^ " + i["link"] + "\n")
+        sql.insertChannel(i)
 
 if __name__ == '__main__':
     sys.exit(main())
+

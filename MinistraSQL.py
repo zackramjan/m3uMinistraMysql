@@ -34,28 +34,28 @@ class MinistraSQL(object):
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         chId = cursor.lastrowid
-        cursor.commit()
+        self.myCon.commit()
         
-        query = "INSERT  INTO ch_links (ch_id,url) VALUES( %s, %s, %s, 1, %s, %s)"
-        values = (item["link"], chId)
+        query = "INSERT  INTO ch_links (ch_id,url) VALUES( %s, %s)"
+        values = (chId,item["link"])
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
-        cursor.commit()
+        self.myCon.commit()
 
     def checkInsertGenre(self,genre):
-        query = "INSERT IGNORE INTO tv_genre (title) VALUES( %s)"
-        values = (genre)
+        query = "INSERT IGNORE INTO tv_genre (title) VALUES (%s)"
+        values = (genre,)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
-        cursor.commit()
+        self.myCon.commit()
         
     def getGenreID(self,genre):
-        query = "select id from tv_genere where title = %s"
-        values = (genre)
+        query = "select id from tv_genre where title = %s"
+        values = (genre,)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         res = cursor.fetchone()   
-        return res["title"]
+        return res[0]
     
     
     def getMaxChannel(self):
@@ -63,5 +63,5 @@ class MinistraSQL(object):
         cursor = self.myCon.cursor()
         cursor.execute(query)
         res = cursor.fetchone()   
-        return res["max"]
+        return res[0] + 1;
     
