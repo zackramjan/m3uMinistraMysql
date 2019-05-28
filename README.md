@@ -1,2 +1,2 @@
 # m3uMinistraMysql
-import m3u into ministra
+insert m3u playlist directly to ministra database
