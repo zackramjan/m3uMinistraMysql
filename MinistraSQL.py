@@ -88,8 +88,8 @@ class MinistraSQL(object):
         values = (genre,)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
-        if (cursor.rowcount() > 0):
-            res = cursor.fetchone()   
+        res = cursor.fetchone()   
+        if (cursor.rowcount > 0):
             return res[0]
         else :
             return -1
