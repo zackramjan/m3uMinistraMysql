@@ -46,7 +46,7 @@ class MinistraSQL(object):
         self.myCon.commit()
         
         #insert the channel in the pkg
-        query = "INSERT  INTO service_in_package (service_id,package_id,type) VALUES( %s, %s,%s)"
+        query = "INSERT  INTO service_in_package (service_id,package_id,type,optional) VALUES( %s, %s,%s,1)"
         values = (chId,pid,"tv")
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
