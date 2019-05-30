@@ -23,12 +23,14 @@ class MinistraSQL(object):
               passwd=password,
               database="stalker_db"
             )
+        self.TariffID = self.checkInsertTariff(prefixIn)
 
     def insertChannel(self, item):
         #insert/create the channels group as a genre and pkg 
         self.checkInsertGenre(item["tvg-group"])
         gid = self.getGenreID(item["tvg-group"])
         pid = self.checkInsertPkg(item["tvg-group"])
+        self.insertPkgIntoTariff(pid,self.TariffID)
         maxCh = self.getMaxChannel()
         
         #add teh channel
@@ -93,7 +95,6 @@ class MinistraSQL(object):
             return res[0]
         else :
             return -1
-        
     
     def getMaxChannel(self):
         query = "select max(number) as max from itv"
@@ -125,3 +126,42 @@ class MinistraSQL(object):
         cursor = self.myCon.cursor()
         cursor.execute(query)
         self.myCon.commit()
+
+    def checkInsertTariff(self,tariffName):
+        if not tariffName:
+            tariffName = "main"
+        tariffID = self.getTariffID(tariffName)
+        if tariffID > 0:
+            return tariffID
+        
+        query = "INSERT INTO tariff_plan (name) VALUES (%s)"
+        values = (tariffName,)
+        cursor = self.myCon.cursor()
+        cursor.execute(query, values)
+        tariffID = cursor.lastrowid
+        self.myCon.commit()    
+        return tariffID
+    
+    def getTariffID(self,tariffName):
+        query = "select id from tariff_plan where name = %s"
+        values = (tariffName)
+        cursor = self.myCon.cursor()
+        cursor.execute(query, values)
+        res = cursor.fetchone()   
+        if (cursor.rowcount > 0):
+            return res[0]
+        else :
+            return -1
+        
+    def insertPkgIntoTariff(self,pkgID,TariffID):
+        query = "select id from package_in_plan where package_id = %s AND plan_id = %s"
+        values = (pkgID,TariffID)
+        cursor = self.myCon.cursor()
+        cursor.execute(query, values)
+        res = cursor.fetchone()      
+        if (cursor.rowcount < 1):
+            query = "insert into package_in_plan package_id,plan_id,optional VALUES (%s,%s,1)"
+            values = (pkgID,TariffID)
+            cursor.execute(query, values)
+            self.myCon.commit() 
+            
