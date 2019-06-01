@@ -26,7 +26,20 @@ class MinistraSQL(object):
         self.TariffID = self.checkInsertTariff(prefixIn)
 
     def insertChannel(self, item):
-        #insert/create the channels group as a genre and pkg 
+        #check if channel already exits
+        query = "select id from itv where name = %s AND cmd = %s"
+        values = (item["tvg-name"],item["link"])
+        cursor = self.myCon.cursor()
+        cursor.execute(query, values)
+        cursor.fetchone()   
+        if (cursor.rowcount > 0):
+            print "Skipping " + item["tvg-name"] + " : " + item["link"] + "  (already inserted)\n"
+            return
+        else:
+            print "Inserting " + item["tvg-name"] + " : " + item["link"] + "\n"
+            
+        
+        #insert/create the channels group as a genre and pkg
         self.checkInsertGenre(item["tvg-group"])
         gid = self.getGenreID(item["tvg-group"])
         pid = self.checkInsertPkg(item["tvg-group"])
