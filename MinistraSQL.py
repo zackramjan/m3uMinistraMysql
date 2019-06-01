@@ -47,7 +47,7 @@ class MinistraSQL(object):
         maxCh = self.getMaxChannel()
         
         #add teh channel
-        query = "INSERT  INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id) VALUES( %s, %s, %s, 1, %s, %s)"
+        query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id) VALUES( %s, %s, %s, 1, %s, %s)"
         values = (item["tvg-name"], maxCh, item["link"], gid, self.prefix + item["tvg-ID"])
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
@@ -61,7 +61,7 @@ class MinistraSQL(object):
         self.myCon.commit()
         
         #insert the channel in the pkg
-        query = "INSERT  INTO service_in_package (service_id,package_id,type,optional) VALUES( %s, %s,%s,1)"
+        query = "INSERT  INTO service_in_package (service_id,package_id,type,options) VALUES( %s, %s,%s,1)"
         values = (chId,pid,"tv")
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
@@ -157,7 +157,7 @@ class MinistraSQL(object):
     
     def getTariffID(self,tariffName):
         query = "select id from tariff_plan where name = %s"
-        values = (tariffName)
+        values = (tariffName,)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         res = cursor.fetchone()   
@@ -173,7 +173,7 @@ class MinistraSQL(object):
         cursor.execute(query, values)
         res = cursor.fetchone()      
         if (cursor.rowcount < 1):
-            query = "insert into package_in_plan package_id,plan_id,optional VALUES (%s,%s,1)"
+            query = "insert into package_in_plan (package_id,plan_id,optional) VALUES (%s,%s,1)"
             values = (pkgID,TariffID)
             cursor.execute(query, values)
             self.myCon.commit() 
