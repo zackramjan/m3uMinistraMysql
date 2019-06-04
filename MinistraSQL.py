@@ -17,6 +17,7 @@ class MinistraSQL(object):
         Constructor
         '''
         self.prefix = prefixIn
+        self.genreMap = {}
         self.myCon = mysql.connector.connect(
               host=dbhost,
               user=username,
@@ -26,6 +27,7 @@ class MinistraSQL(object):
         self.TariffID = self.checkInsertTariff(prefixIn)
 
     def insertChannel(self, item):
+        
         #check if channel already exits
         query = "select id from itv where name = %s AND cmd = %s"
         values = (item["tvg-name"],item["link"])
@@ -40,9 +42,13 @@ class MinistraSQL(object):
             
         
         #insert/create the channels group as a genre and pkg
-        self.checkInsertGenre(item["tvg-group"])
-        gid = self.getGenreID(item["tvg-group"])
-        pid = self.checkInsertPkg(item["tvg-group"])
+        #check the genre map file
+        genre = item["tvg-group"]
+        if  item["tvg-group"] in self.genreMap.keys():
+            genre = self.genreMap[item["tvg-group"]]     
+        self.checkInsertGenre(genre)
+        gid = self.getGenreID(genre)
+        pid = self.checkInsertPkg(genre)
         self.insertPkgIntoTariff(pid,self.TariffID)
         maxCh = self.getMaxChannel()
         
@@ -67,8 +73,6 @@ class MinistraSQL(object):
         cursor.execute(query, values)
         self.myCon.commit()
         
-        
-
     def checkInsertGenre(self,genre):
         maxGen = self.getMaxGenre()
         query = "INSERT IGNORE INTO tv_genre (title,number) VALUES (%s,%s)"
@@ -177,4 +181,12 @@ class MinistraSQL(object):
             values = (pkgID,TariffID)
             cursor.execute(query, values)
             self.myCon.commit() 
+    
+    def useGenreMapFile(self,GenreMapFile):
+        self.genreMap = {}
+        with open(GenreMapFile) as f:
+            for line in f:
+                (key, val) = line.split(":")
+                self.genreMap[key] = val
+        
             
