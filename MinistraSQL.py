@@ -48,7 +48,7 @@ class MinistraSQL(object):
             genre = self.genreMap[item["tvg-group"]]     
         self.checkInsertGenre(genre)
         gid = self.getGenreID(genre)
-        pid = self.checkInsertPkg(genre)
+        pid = self.checkInsertPkg(self.prefix + "-" + genre)
         self.insertPkgIntoTariff(pid,self.TariffID)
         maxCh = self.getMaxChannel()
         
