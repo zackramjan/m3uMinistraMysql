@@ -192,8 +192,8 @@ class MinistraSQL(object):
         self.genreMap = {}
         with open(GenreMapFile) as f:
             for line in f:
-		if ":" in line:
-			(key, val) = line.split(":")
-			self.genreMap[key] = val
+                if ":" in line:
+                    (key, val) = line.split(":")
+                    self.genreMap[key] = val
         
             
