@@ -194,6 +194,6 @@ class MinistraSQL(object):
             for line in f:
                 if ":" in line:
                     (key, val) = line.split(":")
-                    self.genreMap[key] = val
+                    self.genreMap[key.rstrip()] = val.rstrip()
         
             

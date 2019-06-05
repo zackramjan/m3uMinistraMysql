@@ -53,15 +53,15 @@ class M3uParser:
         lineInfo = self.lines[n]
         lineLink = self.lines[n+1]
         if lineInfo != "#EXTM3U":
-            m = re.search("tvg-name=\"(.*?)\"", lineInfo)
+            m = re.search("tvg-name=\"(.*?)\"", lineInfo, re.IGNORECASE)
             name = m.group(1)
-            m = re.search("tvg-ID=\"(.*?)\"", lineInfo)
+            m = re.search("tvg-ID=\"(.*?)\"", lineInfo, re.IGNORECASE)
             id = m.group(1)
-            m = re.search("tvg-logo=\"(.*?)\"", lineInfo)
+            m = re.search("tvg-logo=\"(.*?)\"", lineInfo, re.IGNORECASE)
             logo = m.group(1)
-            m = re.search("group-title=\"(.*?)\"", lineInfo)
+            m = re.search("group-title=\"(.*?)\"", lineInfo, re.IGNORECASE)
             group = m.group(1)
-            m = re.search("[,](?!.*[,])(.*?)$", lineInfo)
+            m = re.search("[,](?!.*[,])(.*?)$", lineInfo, re.IGNORECASE)
             title = m.group(1)
             # ~ print(name+"||"+id+"||"+logo+"||"+group+"||"+title)
             

@@ -19,8 +19,9 @@ def main(argv=None):
         sql.useGenreMapFile(sys.argv[3])
      
     for i in myM3u.getList():
-        sys.stderr.write(i["title"] + " ^ " + i["tvg-name"] + " ^ " + i["tvg-ID"] + " ^ " + i["tvg-group"] + " ^ " + i["link"] + "\n")
-        sql.insertChannel(i)
+        if "/series/" not in i["link"] and "/movie/" not in i["link"]:
+            sys.stderr.write(i["title"] + " ^ " + i["tvg-name"] + " ^ " + i["tvg-ID"] + " ^ " + i["tvg-group"] + " ^ " + i["link"] + "\n")
+            sql.insertChannel(i)
 
 if __name__ == '__main__':
     sys.exit(main())
