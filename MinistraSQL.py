@@ -118,14 +118,20 @@ class MinistraSQL(object):
         cursor = self.myCon.cursor()
         cursor.execute(query)
         res = cursor.fetchone()   
-        return res[0] + 1;
+        if (cursor.rowcount > 0 and res[0] is not None):
+            return res[0] + 1
+        else :
+            return 1
     
     def getMaxGenre(self):
         query = "select max(number) as max from tv_genre"
         cursor = self.myCon.cursor()
         cursor.execute(query)
         res = cursor.fetchone()   
-        return res[0] + 1;
+        if (cursor.rowcount > 0 and res[0] is not None):
+            return res[0] + 1
+        else :
+            return 1
     
     def DeleteAllChannels(self):
         query = "delete from itv where id > 0"
@@ -186,7 +192,8 @@ class MinistraSQL(object):
         self.genreMap = {}
         with open(GenreMapFile) as f:
             for line in f:
-                (key, val) = line.split(":")
-                self.genreMap[key] = val
+		if ":" in line:
+			(key, val) = line.split(":")
+			self.genreMap[key] = val
         
             
