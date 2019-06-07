@@ -196,4 +196,15 @@ class MinistraSQL(object):
                     (key, val) = line.split(":")
                     self.genreMap[key.rstrip()] = val.rstrip()
         
-            
+    def cleanChannels(self):
+        query = "delete from itv"
+        cursor = self.myCon.cursor()
+        cursor.execute(query)
+        query = "delete from ch_links"
+        cursor = self.myCon.cursor()
+        cursor.execute(query)
+        query = "delete from service_in_package"
+        cursor = self.myCon.cursor()
+        cursor.execute(query)
+        self.myCon.commit() 
+              
