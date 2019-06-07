@@ -9,14 +9,24 @@ import sys
 import M3uParser
 import MinistraSQL
 import os
+import argparse
 
 def main(argv=None): 
-    myM3u = M3uParser.M3uParser();
-    myM3u.readM3u(sys.argv[1])
-    sql = MinistraSQL.MinistraSQL("root","st@lk3r","localhost",sys.argv[2])
+    parser = argparse.ArgumentParser(description='Process import args.')
+    parser.add_argument('-t', '--tag', help='xmltv-id prefix: any tag/id of your choice. channels will be added to a tariff with this name',default="")
+    parser.add_argument('-g', '--genre', help='genre mapping text file name in format: XMLTV-Group name:your genre')
+    parser.add_argument('-n', '--channel', help='A prefix for your channel names', default="")
+    requiredNamed = parser.add_argument_group('required arguments')
+    requiredNamed.add_argument('-m', '--m3u', help='Input m3u name', required=True)
+    args=parser.parse_args()
     
-    if(os.path.isfile(sys.argv[3])):
-        sql.useGenreMapFile(sys.argv[3])
+    
+    myM3u = M3uParser.M3uParser();
+    myM3u.readM3u(args.m3u)
+    sql = MinistraSQL.MinistraSQL("root","st@lk3r","localhost",args.tag)
+    
+    if os.path.isfile(args.genre):
+        sql.useGenreMapFile(args.genre)
      
     for i in myM3u.getList():
         if "/series/" not in i["link"] and "/movie/" not in i["link"]:
