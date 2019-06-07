@@ -6,9 +6,23 @@
 
 then run:
 
-``` ImportM3u.py list.m3u unique_tag ```
- 
- list.m3u is your m3u list
+``` 
+usage: ImportM3u.py [-h] [-t TAG] [-g GENRE] [-n CHANNEL] -m M3U
 
-* unique_tag is your choice of a keyword to tag your packages and stream xmltv_ids 
-* this is useful in case you want to import multiple m3u's but you dont want to mix up their epgs 
+Process import args.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t TAG, --tag TAG     xmltv-id prefix: any tag/id of your choice. channels
+                        will be added to a tariff with this name
+  -g GENRE, --genre GENRE
+                        genre mapping text file name in format: XMLTV-Group
+                        name:your genre
+  -n CHANNEL, --channel CHANNEL
+                        A prefix for your channel names
+
+required arguments:
+  -m M3U, --m3u M3U     Input m3u name
+
+ ```
+ 
