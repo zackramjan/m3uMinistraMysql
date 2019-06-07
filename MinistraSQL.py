@@ -12,11 +12,12 @@ class MinistraSQL(object):
     classdocs
     '''
 
-    def __init__(self, username, password, dbhost, prefixIn):
+    def __init__(self, username, password, dbhost, prefixIn,channelPrefixIn):
         '''
         Constructor
         '''
         self.prefix = prefixIn
+        self.channelPrefix = channelPrefixIn
         self.genreMap = {}
         self.myCon = mysql.connector.connect(
               host=dbhost,
@@ -52,9 +53,9 @@ class MinistraSQL(object):
         self.insertPkgIntoTariff(pid,self.TariffID)
         maxCh = self.getMaxChannel()
         
-        #add teh channel
+        #add the channel
         query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id) VALUES( %s, %s, %s, 1, %s, %s)"
-        values = (item["tvg-name"], maxCh, item["link"], gid, self.prefix + item["tvg-ID"])
+        values = (item["tvg-name"] + " " + self.channelPrefix, maxCh, item["link"], gid, self.prefix + item["tvg-ID"])
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         chId = cursor.lastrowid

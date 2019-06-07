@@ -21,7 +21,7 @@ def main(argv=None):
     requiredNamed.add_argument('-m', '--m3u', help='Input m3u name', required=True)
     args=parser.parse_args()
     
-    sql = MinistraSQL.MinistraSQL("root","st@lk3r","localhost",args.tag)
+    sql = MinistraSQL.MinistraSQL("root","st@lk3r","localhost",args.tag,args.channel)
     
     if args.remove:
         sql.cleanChannels()
