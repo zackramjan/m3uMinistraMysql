@@ -36,7 +36,7 @@ class MinistraSQL(object):
         cursor.execute(query, values)
         cursor.fetchone()   
         if (cursor.rowcount > 0):
-            print "Skipping " + item["tvg-name"] + " : " + item["link"] + "  (already inserted)"
+            print "   Skipping " + item["tvg-name"] + " : " + item["link"] + "  (already inserted)"
             return
         else:
             print "Inserting " + item["tvg-name"] + " : " + item["link"] 
