@@ -31,15 +31,15 @@ class MinistraSQL(object):
         
         #check if channel already exits
         query = "select id from itv where name = %s AND cmd = %s"
-        values = (item["tvg-name"],item["link"])
+        values = (item["tvg-name"]+ self.channelPrefix,item["link"])
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         cursor.fetchone()   
         if (cursor.rowcount > 0):
-            print "Skipping " + item["tvg-name"] + " : " + item["link"] + "  (already inserted)\n"
+            print "Skipping " + item["tvg-name"] + " : " + item["link"] + "  (already inserted)"
             return
         else:
-            print "Inserting " + item["tvg-name"] + " : " + item["link"] + "\n"
+            print "Inserting " + item["tvg-name"] + " : " + item["link"] 
             
         
         #insert/create the channels group as a genre and pkg
@@ -55,7 +55,7 @@ class MinistraSQL(object):
         
         #add the channel
         query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id) VALUES( %s, %s, %s, 1, %s, %s)"
-        values = (item["tvg-name"] + " " + self.channelPrefix, maxCh, item["link"], gid, self.prefix + item["tvg-ID"])
+        values = (item["tvg-name"] + self.channelPrefix, maxCh, item["link"], gid, self.prefix + item["tvg-ID"])
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         chId = cursor.lastrowid
