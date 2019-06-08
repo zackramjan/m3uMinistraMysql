@@ -34,7 +34,7 @@ def main(argv=None):
      
     for i in myM3u.getList():
         if "/series/" not in i["link"] and "/movie/" not in i["link"]:
-            sys.stderr.write(i["title"] + " ^ " + i["tvg-name"] + " ^ " + i["tvg-ID"] + " ^ " + i["tvg-group"] + " ^ " + i["link"] + "\n")
+            #sys.stderr.write(i["title"] + " ^ " + i["tvg-name"] + " ^ " + i["tvg-ID"] + " ^ " + i["tvg-group"] + " ^ " + i["link"] + "\n")
             sql.insertChannel(i)
 
 if __name__ == '__main__':
