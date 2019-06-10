@@ -55,7 +55,10 @@ class MinistraSQL(object):
         
         #add the channel
         query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id) VALUES( %s, %s, %s, 1, %s, %s)"
-        values = (item["tvg-name"] + self.channelPrefix, maxCh, item["link"], gid, self.prefix + item["tvg-ID"])
+	xmlID = self.prefix + item["tvg-ID"]
+	if not item["tvg-ID"]:
+            xmlID = ""     
+        values = (item["tvg-name"] + self.channelPrefix, maxCh, item["link"], gid, xmlID)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         chId = cursor.lastrowid
