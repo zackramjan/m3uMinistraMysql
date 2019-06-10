@@ -21,7 +21,7 @@ def main(argv=None):
     requiredNamed.add_argument('-m', '--m3u', help='Input m3u name', required=True)
     args=parser.parse_args()
     
-    sql = MinistraSQL.MinistraSQL("root","st@lk3r","localhost",args.tag,args.channel)
+    sql = MinistraSQL.MinistraSQL("root","st@lk3r","localhost",args.tag)
     
     if args.remove:
         sql.cleanChannels()
@@ -34,8 +34,7 @@ def main(argv=None):
      
     for i in myM3u.getList():
         if "/series/" not in i["link"] and "/movie/" not in i["link"]:
-            #sys.stderr.write(i["title"] + " ^ " + i["tvg-name"] + " ^ " + i["tvg-ID"] + " ^ " + i["tvg-group"] + " ^ " + i["link"] + "\n")
-            sql.insertChannel(i)
+            sql.insertChannel(i["tvg-ID"] + args.channel,i["tvg-name"], i["tvg-group"],  i["link"], i["tvg-logo"])
 
 if __name__ == '__main__':
     sys.exit(main())

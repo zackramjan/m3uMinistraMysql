@@ -12,12 +12,11 @@ class MinistraSQL(object):
     classdocs
     '''
 
-    def __init__(self, username, password, dbhost, prefixIn,channelPrefixIn):
+    def __init__(self, username, password, dbhost, prefixIn):
         '''
         Constructor
         '''
         self.prefix = prefixIn
-        self.channelPrefix = channelPrefixIn
         self.genreMap = {}
         self.myCon = mysql.connector.connect(
               host=dbhost,
@@ -27,26 +26,26 @@ class MinistraSQL(object):
             )
         self.TariffID = self.checkInsertTariff(prefixIn)
 
-    def insertChannel(self, item):
+    def insertChannel(self, itemID,itemName, itemGroup, itemLink, itemPic):
         
         #check if channel already exits
         query = "select id from itv where name = %s AND cmd = %s"
-        values = (item["tvg-name"]+ self.channelPrefix,item["link"])
+        values = (itemName,itemLink)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         cursor.fetchone()   
         if (cursor.rowcount > 0):
-            print "   Skipping " + item["tvg-name"] + " : " + item["link"] + "  (already inserted)"
+            print "   Skipping " +itemName + " : " + itemLink + "  (already inserted)"
             return
         else:
-            print "Inserting " + item["tvg-name"] + " : " + item["link"] 
+            print "Inserting " +itemName + " : " + itemLink 
             
         
         #insert/create the channels group as a genre and pkg
         #check the genre map file
-        genre = item["tvg-group"]
-        if  item["tvg-group"] in self.genreMap.keys():
-            genre = self.genreMap[item["tvg-group"]]     
+        genre =itemGroup
+        if  itemGroup in self.genreMap.keys():
+            genre = self.genreMap[itemGroup]     
         self.checkInsertGenre(genre)
         gid = self.getGenreID(genre)
         pid = self.checkInsertPkg(self.prefix + "-" + genre)
@@ -55,17 +54,17 @@ class MinistraSQL(object):
         
         #add the channel
         query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id) VALUES( %s, %s, %s, 1, %s, %s)"
-        xmlID = self.prefix + item["tvg-ID"]
-        if not item["tvg-ID"]:
+        xmlID = self.prefix +  itemID
+        if not itemID:
             xmlID = ""     
-        values = (item["tvg-name"] + self.channelPrefix, maxCh, item["link"], gid, xmlID)
+        values = (itemName, maxCh, itemLink, gid, xmlID)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         chId = cursor.lastrowid
         self.myCon.commit()
         
         query = "INSERT  INTO ch_links (ch_id,url) VALUES( %s, %s)"
-        values = (chId,item["link"])
+        values = (chId,itemLink)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         self.myCon.commit()
@@ -212,31 +211,31 @@ class MinistraSQL(object):
         cursor.execute(query)
         self.myCon.commit() 
     
-    def insertMovie(self, item):
+    def insertMovie(self, itemID,itemName, itemGroup, itemLink, itemPic):
         
         #check if channel already exits
         query = "select id from video where name = %s AND path = %s"
-        values = (item["tvg-name"]+ self.channelPrefix,item["link"])
+        values = (itemName,itemLink)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         cursor.fetchone()   
         if (cursor.rowcount > 0):
-            print "   Skipping " + item["tvg-name"] + " : " + item["link"] + "  (already inserted)"
+            print "   Skipping " + itemName + " : " +itemLink + "  (already inserted)"
             return
         else:
-            print "Inserting " + item["tvg-name"] + " : " + item["link"] 
+            print "Inserting " + itemName + " : " +itemLink 
         
         #insert/create the ,pvoe group 
         #check the genre map file
-        genre = item["tvg-group"]
-        if  item["tvg-group"] in self.genreMap.keys():
-            genre = self.genreMap[item["tvg-group"]]     
+        genre = itemGroup
+        if  itemGroup in self.genreMap.keys():
+            genre = self.genreMap[itemGroup]     
         self.checkInsertVideoCat(genre)
         gid = self.getVideoCatID(genre)
         
         #add the movie
         query = "INSERT IGNORE INTO video (name,o_name,path,category_id,status,autocomplete_provider) VALUES( %s, %s, %s, %s, 1, %s)"
-        values = (item["tvg-name"] + self.channelPrefix,item["tvg-name"] + self.channelPrefix,item["link"], gid, 1, "tmdb")
+        values = (itemName,itemName,itemLink, gid, 1, "tmdb")
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         vidId = cursor.lastrowid
@@ -244,7 +243,7 @@ class MinistraSQL(object):
                 
         #add movie link
         query = "INSERT IGNORE INTO video_series_files (video_id,file_type,protocol,url,languages,status) VALUES (%s,%s,%s,%s,%s,1)"
-        values = (vidId,"video","custom","ffmpeg" + " " + item["link"], "a:1:{i:0;s:2:\"en\";}")
+        values = (vidId,"video","custom","ffmpeg" + " " + itemLink, "a:1:{i:0;s:2:\"en\";}")
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         self.myCon.commit()
