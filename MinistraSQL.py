@@ -55,8 +55,8 @@ class MinistraSQL(object):
         
         #add the channel
         query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id) VALUES( %s, %s, %s, 1, %s, %s)"
-	xmlID = self.prefix + item["tvg-ID"]
-	if not item["tvg-ID"]:
+        xmlID = self.prefix + item["tvg-ID"]
+        if not item["tvg-ID"]:
             xmlID = ""     
         values = (item["tvg-name"] + self.channelPrefix, maxCh, item["link"], gid, xmlID)
         cursor = self.myCon.cursor()
@@ -136,7 +136,7 @@ class MinistraSQL(object):
             return res[0] + 1
         else :
             return 1
-    
+        
     def DeleteAllChannels(self):
         query = "delete from itv where id > 0"
         cursor = self.myCon.cursor()
@@ -211,4 +211,82 @@ class MinistraSQL(object):
         cursor = self.myCon.cursor()
         cursor.execute(query)
         self.myCon.commit() 
-              
+    
+    def insertMovie(self, item):
+        
+        #check if channel already exits
+        query = "select id from video where name = %s AND path = %s"
+        values = (item["tvg-name"]+ self.channelPrefix,item["link"])
+        cursor = self.myCon.cursor()
+        cursor.execute(query, values)
+        cursor.fetchone()   
+        if (cursor.rowcount > 0):
+            print "   Skipping " + item["tvg-name"] + " : " + item["link"] + "  (already inserted)"
+            return
+        else:
+            print "Inserting " + item["tvg-name"] + " : " + item["link"] 
+        
+        #insert/create the ,pvoe group 
+        #check the genre map file
+        genre = item["tvg-group"]
+        if  item["tvg-group"] in self.genreMap.keys():
+            genre = self.genreMap[item["tvg-group"]]     
+        self.checkInsertVideoCat(genre)
+        gid = self.getVideoCatID(genre)
+        
+        #add the movie
+        query = "INSERT IGNORE INTO video (name,o_name,path,category_id,status,autocomplete_provider) VALUES( %s, %s, %s, %s, 1, %s)"
+        values = (item["tvg-name"] + self.channelPrefix,item["tvg-name"] + self.channelPrefix,item["link"], gid, 1, "tmdb")
+        cursor = self.myCon.cursor()
+        cursor.execute(query, values)
+        vidId = cursor.lastrowid
+        self.myCon.commit()
+                
+        #add movie link
+        query = "INSERT IGNORE INTO video_series_files (video_id,file_type,protocol,url,languages,status) VALUES (%s,%s,%s,%s,%s,1)"
+        values = (vidId,"video","custom","ffmpeg" + " " + item["link"], "a:1:{i:0;s:2:\"en\";}")
+        cursor = self.myCon.cursor()
+        cursor.execute(query, values)
+        self.myCon.commit()
+        
+    def checkInsertVideoCat(self,genre):
+        maxGen = self.getMaxMovieCat()
+        query = "INSERT IGNORE INTO media_category (category_name,category_alias,number) VALUES (%s,%s)"
+        values = (genre,genre,maxGen)
+        cursor = self.myCon.cursor()
+        cursor.execute(query, values)
+        self.myCon.commit()
+           
+    def getVideoCatID(self,genre):
+        query = "select id from media_category where category_name = %s"
+        values = (genre,)
+        cursor = self.myCon.cursor()
+        cursor.execute(query, values)
+        res = cursor.fetchone()   
+        return res[0]
+    
+    def getMaxMovieCat(self):
+        query = "select max(num) as max from media_category"
+        cursor = self.myCon.cursor()
+        cursor.execute(query)
+        res = cursor.fetchone()   
+        if (cursor.rowcount > 0 and res[0] is not None):
+            return res[0] + 1
+        else :
+            return 1    
+        
+        
+    def cleanMovies(self):
+        query = "delete from video"
+        cursor = self.myCon.cursor()
+        cursor.execute(query)
+        query = "delete from video_series_files"
+        cursor = self.myCon.cursor()
+        cursor.execute(query)
+        query = "delete from media_category"
+        cursor = self.myCon.cursor()
+        cursor.execute(query)
+        query = "delete from cat_genre"
+        cursor = self.myCon.cursor()
+        cursor.execute(query)
+        self.myCon.commit()     
