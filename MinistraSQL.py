@@ -33,10 +33,10 @@ class MinistraSQL(object):
         cursor.execute(query, values)
         cursor.fetchone()   
         if (cursor.rowcount > 0):
-            print "   Skipping Channel " +itemName + " : " + itemLink + "  (already inserted)"
+            print "   Skipping Channel [" +itemGroup + "] " +itemName + " : " + itemLink + "  (already inserted)"
             return
         else:
-            print "Inserting Channel " +itemName + " : " + itemLink 
+            print "Inserting Channel [" +itemGroup + "] " +itemName + " : " + itemLink 
         
         #insert/create the channels group as a genre and pkg
         self.checkInsertGenre(itemGroup)
@@ -205,10 +205,10 @@ class MinistraSQL(object):
         cursor.execute(query, values)
         cursor.fetchone()   
         if (cursor.rowcount > 0):
-            print "   Skipping Movie " + itemName + " : " +itemLink + "  (already inserted)"
+            print "   Skipping Movie [" +itemGroup + "] " + itemName + " : " +itemLink + "  (already inserted)"
             return
         else:
-            print "Inserting Movie " + itemName + " : " +itemLink 
+            print "Inserting Movie [" +itemGroup + "] " + itemName + " : " +itemLink 
         
         self.checkInsertVideoCat(itemGroup)
         gid = self.getVideoCatID(itemGroup)

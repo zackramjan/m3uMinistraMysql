@@ -36,6 +36,9 @@ def main(argv=None):
                 if ":" in line:
                     (key, val) = line.split(":")
                     genreMap[key.rstrip()] = val.rstrip()
+                elif(line.rstrip().endswith("^")):
+                    genreMap[line.replace_all("^","").rstrip()] = line.rstrip()
+                    
     
     #process the m3u and insert
     myM3u = M3uParser.M3uParser();
