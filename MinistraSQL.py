@@ -214,23 +214,23 @@ class MinistraSQL(object):
         gid = self.getVideoCatID(itemGroup)
         
         #add the movie
-        query = "INSERT IGNORE INTO video (name,o_name,path,category_id,status,autocomplete_provider) VALUES( %s, %s, %s, %s, 1, %s)"
-        values = (itemName,itemName,itemLink, gid, 1, "tmdb")
+        query = "INSERT IGNORE INTO video (name,o_name,path,category_id,status,autocomplete_provider) VALUES( %s, %s, %s, %s, %s, %s)"
+        values = (itemName,itemName,itemLink, gid,1,"tmdb")
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         vidId = cursor.lastrowid
         self.myCon.commit()
                 
         #add movie link
-        query = "INSERT IGNORE INTO video_series_files (video_id,file_type,protocol,url,languages,status) VALUES (%s,%s,%s,%s,%s,1)"
-        values = (vidId,"video","custom","ffmpeg" + " " + itemLink, "a:1:{i:0;s:2:\"en\";}")
+        query = "INSERT IGNORE INTO video_series_files (video_id,file_type,protocol,url,languages,status) VALUES (%s,%s,%s,%s,%s,%s)"
+        values = (vidId,"video","custom","ffmpeg" + " " + itemLink, "a:1:{i:0;s:2:\"en\";}",1)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         self.myCon.commit()
         
     def checkInsertVideoCat(self,genre):
         maxGen = self.getMaxMovieCat()
-        query = "INSERT IGNORE INTO media_category (category_name,category_alias,number) VALUES (%s,%s)"
+        query = "INSERT IGNORE INTO media_category (category_name,category_alias,num) VALUES (%s,%s,%s)"
         values = (genre,genre,maxGen)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
