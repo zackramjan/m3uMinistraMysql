@@ -7,3 +7,7 @@ delete from services_package;
 delete from service_in_package;
 delete from tv_genre;
 delete from played_itv;
+delete from video;
+delete from video_series_files;
+delete from media_category;
+delete from cat_genre;
