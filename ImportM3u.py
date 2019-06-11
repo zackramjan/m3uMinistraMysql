@@ -37,7 +37,7 @@ def main(argv=None):
                     (key, val) = line.split(":")
                     genreMap[key.rstrip()] = val.rstrip()
                 elif(line.rstrip().endswith("^")):
-                    genreMap[line.replace_all("^","").rstrip()] = line.rstrip()
+                    genreMap[line.replace("^","").rstrip()] = line.rstrip()
                     
     
     #process the m3u and insert
