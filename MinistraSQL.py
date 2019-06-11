@@ -214,7 +214,7 @@ class MinistraSQL(object):
         gid = self.getVideoCatID(itemGroup)
         
         #add the movie
-        query = "INSERT IGNORE INTO video (name,o_name,path,category_id,status,autocomplete_provider,protocol,accessed) VALUES( %s, %s, %s, %s, %s, %s,%s,%s)"
+        query = "INSERT IGNORE INTO video (name,o_name,path,category_id,status,autocomplete_provider,protocol,accessed,added) VALUES( %s, %s, %s, %s, %s, %s,%s,%s,CURDATE())"
         values = (itemName,itemName,itemLink, gid,1,"tmdb","",1)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
