@@ -48,6 +48,7 @@ def main(argv=None):
         
         #skip if genre ends with ^
         if genre.endswith("^"):
+            print "skipping due to " + genre + ": " + i["tvg-name"]
             continue
         
         if "/series/" in i["link"]:
