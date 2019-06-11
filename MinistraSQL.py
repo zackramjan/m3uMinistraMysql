@@ -37,15 +37,11 @@ class MinistraSQL(object):
             return
         else:
             print "Inserting " +itemName + " : " + itemLink 
-            
         
         #insert/create the channels group as a genre and pkg
-        #check the genre map file
-        genre =itemGroup
- 
-        self.checkInsertGenre(genre)
-        gid = self.getGenreID(genre)
-        pid = self.checkInsertPkg(self.prefix + "-" + genre)
+        self.checkInsertGenre(itemGroup)
+        gid = self.getGenreID(itemGroup)
+        pid = self.checkInsertPkg(self.prefix + "-" + itemGroup)
         self.insertPkgIntoTariff(pid,self.TariffID)
         maxCh = self.getMaxChannel()
         
@@ -214,13 +210,8 @@ class MinistraSQL(object):
         else:
             print "Inserting " + itemName + " : " +itemLink 
         
-        #insert/create the ,pvoe group 
-        #check the genre map file
-        genre = itemGroup
-        if  itemGroup in self.genreMap.keys():
-            genre = self.genreMap[itemGroup]     
-        self.checkInsertVideoCat(genre)
-        gid = self.getVideoCatID(genre)
+        self.checkInsertVideoCat(itemGroup)
+        gid = self.getVideoCatID(itemGroup)
         
         #add the movie
         query = "INSERT IGNORE INTO video (name,o_name,path,category_id,status,autocomplete_provider) VALUES( %s, %s, %s, %s, 1, %s)"
