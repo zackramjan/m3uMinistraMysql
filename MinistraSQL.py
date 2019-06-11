@@ -17,7 +17,6 @@ class MinistraSQL(object):
         Constructor
         '''
         self.prefix = prefixIn
-        self.genreMap = {}
         self.myCon = mysql.connector.connect(
               host=dbhost,
               user=username,
@@ -27,7 +26,6 @@ class MinistraSQL(object):
         self.TariffID = self.checkInsertTariff(prefixIn)
 
     def insertChannel(self, itemID,itemName, itemGroup, itemLink, itemPic):
-        
         #check if channel already exits
         query = "select id from itv where name = %s AND cmd = %s"
         values = (itemName,itemLink)
@@ -44,8 +42,7 @@ class MinistraSQL(object):
         #insert/create the channels group as a genre and pkg
         #check the genre map file
         genre =itemGroup
-        if  itemGroup in self.genreMap.keys():
-            genre = self.genreMap[itemGroup]     
+ 
         self.checkInsertGenre(genre)
         gid = self.getGenreID(genre)
         pid = self.checkInsertPkg(self.prefix + "-" + genre)
@@ -190,14 +187,6 @@ class MinistraSQL(object):
             values = (pkgID,TariffID)
             cursor.execute(query, values)
             self.myCon.commit() 
-    
-    def useGenreMapFile(self,GenreMapFile):
-        self.genreMap = {}
-        with open(GenreMapFile) as f:
-            for line in f:
-                if ":" in line:
-                    (key, val) = line.split(":")
-                    self.genreMap[key.rstrip()] = val.rstrip()
         
     def cleanChannels(self):
         query = "delete from itv"
@@ -273,8 +262,7 @@ class MinistraSQL(object):
             return res[0] + 1
         else :
             return 1    
-        
-        
+
     def cleanMovies(self):
         query = "delete from video"
         cursor = self.myCon.cursor()
