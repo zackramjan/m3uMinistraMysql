@@ -11,7 +11,7 @@ import MinistraSQL
 import os
 import argparse
 
-def useGenreMapFile(self,GenreMapFile):
+def useGenreMapFile(GenreMapFile):
     self.genreMap = {}
     with open(GenreMapFile) as f:
         for line in f:
