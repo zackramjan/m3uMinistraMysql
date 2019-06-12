@@ -244,12 +244,14 @@ class MinistraSQL(object):
             return 1    
     
     def cleanPackagesAndTariffs(self):
+        print "deleting all packages and tariffs"
         self.executeStatement("delete from tariff_plan")
         self.executeStatement("delete from package_in_plan")
         self.executeStatement("delete from user_package_subscription")
         self.executeStatement("delete from services_package")
     
     def cleanChannels(self):
+        print "deleting all channels"
         self.executeStatement("delete from itv")
         self.executeStatement("delete from ch_links")
         self.executeStatement("delete from service_in_package")
@@ -257,12 +259,14 @@ class MinistraSQL(object):
         self.executeStatement("delete from played_itv")
         
     def cleanMovies(self):
+        print "deleting all movies"
         self.executeStatement("delete from video")
         self.executeStatement("delete from video_series_files")
         self.executeStatement("delete from media_category")
         self.executeStatement("delete from cat_genre")
         
     def insertAllChannelsAndMoviesForAllUsers(self):
+        print "adding allmovies and allchannels as main tariff for all users"
         pidtv = self.checkInsertPkg("allchannels",True,"tv")
         pidmov = self.checkInsertPkg("allmovies",True,"video")
         tid= self.checkInsertTariff("main")
