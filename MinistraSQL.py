@@ -41,7 +41,7 @@ class MinistraSQL(object):
         #insert/create the channels group as a genre and pkg
         self.checkInsertGenre(itemGroup)
         gid = self.getGenreID(itemGroup)
-        pid = self.checkInsertPkg(self.prefix + "-" + itemGroup)
+        pid = self.checkInsertPkg(self.prefix + "-" + itemGroup,False,"tv")
         self.insertPkgIntoTariff(pid,self.TariffID)
         maxCh = self.getMaxChannel()
         
@@ -77,13 +77,14 @@ class MinistraSQL(object):
         cursor.execute(query, values)
         self.myCon.commit()
         
-    def checkInsertPkg(self,genre):
+    def checkInsertPkg(self,genre,isAllServices,mediaType):
         pkgID = self.getPkgID(genre)
         if pkgID > 0:
             return pkgID
         
-        query = "INSERT INTO services_package (external_id,name,type) VALUES (%s,%s,%s)"
-        values = (genre,genre,"tv")
+        query = "INSERT INTO services_package (external_id,name,type,all_services) VALUES (%s,%s,%s,%s)"
+        all_services = 1 if isAllServices else 0
+        values = (genre,genre,mediaType,all_services)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         pkgID = cursor.lastrowid
@@ -184,18 +185,6 @@ class MinistraSQL(object):
             cursor.execute(query, values)
             self.myCon.commit() 
         
-    def cleanChannels(self):
-        query = "delete from itv"
-        cursor = self.myCon.cursor()
-        cursor.execute(query)
-        query = "delete from ch_links"
-        cursor = self.myCon.cursor()
-        cursor.execute(query)
-        query = "delete from service_in_package"
-        cursor = self.myCon.cursor()
-        cursor.execute(query)
-        self.myCon.commit() 
-    
     def insertMovie(self, itemID,itemName, itemGroup, itemLink, itemPic):
         
         #check if channel already exits
@@ -253,18 +242,36 @@ class MinistraSQL(object):
             return res[0] + 1
         else :
             return 1    
-
+    
+    def cleanPackagesAndTariffs(self):
+        self.executeStatement("delete from tariff_plan")
+        self.executeStatement("delete from package_in_plan")
+        self.executeStatement("delete from user_package_subscription")
+        self.executeStatement("delete from services_package")
+    
+    def cleanChannels(self):
+        self.executeStatement("delete from itv")
+        self.executeStatement("delete from ch_links")
+        self.executeStatement("delete from service_in_package")
+        self.executeStatement("delete from ch_links")
+        self.executeStatement("delete from played_itv")
+        
     def cleanMovies(self):
-        query = "delete from video"
+        self.executeStatement("delete from video")
+        self.executeStatement("delete from video_series_files")
+        self.executeStatement("delete from media_category")
+        self.executeStatement("delete from cat_genre")
+        
+    def insertAllChannelsAndMoviesForAllUsers(self):
+        pidtv = self.checkInsertPkg("allchannels",True,"tv")
+        pidmov = self.checkInsertPkg("allmovies",True,"video")
+        tid= self.checkInsertTariff("main")
+        self.insertPkgIntoTariff(pidtv,tid)
+        self.insertPkgIntoTariff(pidmov,tid)
+        self.executeStatement("UPDATE users set tariff_plan_id = " + tid)
+        
+    def executeStatement(self,sql):
         cursor = self.myCon.cursor()
-        cursor.execute(query)
-        query = "delete from video_series_files"
-        cursor = self.myCon.cursor()
-        cursor.execute(query)
-        query = "delete from media_category"
-        cursor = self.myCon.cursor()
-        cursor.execute(query)
-        query = "delete from cat_genre"
-        cursor = self.myCon.cursor()
-        cursor.execute(query)
-        self.myCon.commit()     
+        cursor.execute(sql)
+        self.myCon.commit()  
+            

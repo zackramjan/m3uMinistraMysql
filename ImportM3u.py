@@ -27,6 +27,7 @@ def main(argv=None):
     if args.remove:
         sql.cleanChannels()
         sql.cleanMovies()
+        sql.cleanPackagesAndTariffs()
     
     #read in the genreMap file
     genreMap = {} 
@@ -59,9 +60,13 @@ def main(argv=None):
         elif "/movie/" in i["link"]:
             pass
         elif "24/7" in genre:
-            sql.insertMovie(i["tvg-ID"] + args.channel,i["tvg-name"], genre, i["link"], i["tvg-logo"])
+            sql.insertMovie(i["tvg-ID"],i["tvg-name"]+ args.channel, genre, i["link"], i["tvg-logo"])
         else:
-            sql.insertChannel(i["tvg-ID"] + args.channel,i["tvg-name"], genre, i["link"], i["tvg-logo"])
+            sql.insertChannel(i["tvg-ID"],i["tvg-name"] + args.channel, genre, i["link"], i["tvg-logo"])
+            
+    
+    sql.insertAllChannelsAndMoviesForAllUsers()
+                
 
 
 if __name__ == '__main__':
