@@ -58,7 +58,7 @@ def main(argv=None):
         if "/series/" in i["link"]:
             pass
         elif "/movie/" in i["link"]:
-            pass
+            sql.insertMovie(i["tvg-ID"],i["tvg-name"]+ args.channel, genre, i["link"], i["tvg-logo"])
         elif "24/7" in genre:
             sql.insertMovie(i["tvg-ID"],i["tvg-name"]+ args.channel, genre, i["link"], i["tvg-logo"])
         else:
