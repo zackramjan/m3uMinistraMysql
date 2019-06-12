@@ -23,8 +23,7 @@ class MinistraSQL(object):
               passwd=password,
               database="stalker_db"
             )
-        self.TariffID = self.checkInsertTariff(prefixIn)
-
+        
     def insertChannel(self, itemID,itemName, itemGroup, itemLink, itemPic):
         #check if channel already exits
         query = "select id from itv where name = %s AND cmd = %s"
@@ -39,10 +38,11 @@ class MinistraSQL(object):
             print "Inserting Channel [" +itemGroup + "] " +itemName + " : " + itemLink 
         
         #insert/create the channels group as a genre and pkg
+        tid = self.checkInsertTariff(self.prefix)
         self.checkInsertGenre(itemGroup)
         gid = self.getGenreID(itemGroup)
         pid = self.checkInsertPkg(self.prefix + "-" + itemGroup,False,"tv")
-        self.insertPkgIntoTariff(pid,self.TariffID)
+        self.insertPkgIntoTariff(pid,tid)
         maxCh = self.getMaxChannel()
         
         #add the channel
@@ -269,7 +269,7 @@ class MinistraSQL(object):
         print "adding allmovies and allchannels as main tariff for all users"
         pidtv = self.checkInsertPkg("allchannels",True,"tv")
         pidmov = self.checkInsertPkg("allmovies",True,"video")
-        tid= self.checkInsertTariff("main")
+        tid= self.checkInsertTariff("everything")
         self.insertPkgIntoTariff(pidtv,tid)
         self.insertPkgIntoTariff(pidmov,tid)
         self.executeStatement("UPDATE users set tariff_plan_id = " + str(tid))
