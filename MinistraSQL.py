@@ -268,7 +268,7 @@ class MinistraSQL(object):
         tid= self.checkInsertTariff("main")
         self.insertPkgIntoTariff(pidtv,tid)
         self.insertPkgIntoTariff(pidmov,tid)
-        self.executeStatement("UPDATE users set tariff_plan_id = " + tid)
+        self.executeStatement("UPDATE users set tariff_plan_id = " + str(tid))
         
     def executeStatement(self,sql):
         cursor = self.myCon.cursor()
