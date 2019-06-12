@@ -254,6 +254,7 @@ class MinistraSQL(object):
         print "deleting all channels"
         self.executeStatement("delete from itv")
         self.executeStatement("delete from ch_links")
+        self.executeStatement("delete from tv_genre")
         self.executeStatement("delete from service_in_package")
         self.executeStatement("delete from ch_links")
         self.executeStatement("delete from played_itv")
