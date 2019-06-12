@@ -42,7 +42,7 @@ class MinistraSQL(object):
         self.checkInsertGenre(itemGroup)
         gid = self.getGenreID(itemGroup)
         pid = self.checkInsertPkg(self.prefix + "-" + itemGroup,False,"tv")
-        self.insertPkgIntoTariff(pid,tid)
+        self.insertPkgIntoTariff(pid,tid,True)
         maxCh = self.getMaxChannel()
         
         #add the channel
@@ -129,24 +129,7 @@ class MinistraSQL(object):
             return res[0] + 1
         else :
             return 1
-        
-    def DeleteAllChannels(self):
-        query = "delete from itv where id > 0"
-        cursor = self.myCon.cursor()
-        cursor.execute(query)
-        self.myCon.commit()
-        
-        query = "delete from ch_links where id > 0"
-        cursor = self.myCon.cursor()
-        cursor.execute(query)
-        self.myCon.commit()
     
-    def DeleteAllGenre(self):
-        query = "delete from tv_genre where id > 0"
-        cursor = self.myCon.cursor()
-        cursor.execute(query)
-        self.myCon.commit()
-
     def checkInsertTariff(self,tariffName):
         if not tariffName:
             tariffName = "main"
@@ -173,15 +156,16 @@ class MinistraSQL(object):
         else :
             return -1
         
-    def insertPkgIntoTariff(self,pkgID,TariffID):
+    def insertPkgIntoTariff(self,pkgID,TariffID,isOptional):
         query = "select id from package_in_plan where package_id = %s AND plan_id = %s"
         values = (pkgID,TariffID)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
-        res = cursor.fetchone()      
+        cursor.fetchone()      
         if (cursor.rowcount < 1):
-            query = "insert into package_in_plan (package_id,plan_id,optional) VALUES (%s,%s,1)"
-            values = (pkgID,TariffID)
+            query = "insert into package_in_plan (package_id,plan_id,optional) VALUES (%s,%s,%s)"
+            optional = 1 if isOptional else 0
+            values = (pkgID,TariffID,optional)
             cursor.execute(query, values)
             self.myCon.commit() 
         
@@ -271,8 +255,8 @@ class MinistraSQL(object):
         pidtv = self.checkInsertPkg("allchannels",True,"tv")
         pidmov = self.checkInsertPkg("allmovies",True,"video")
         tid= self.checkInsertTariff("everything")
-        self.insertPkgIntoTariff(pidtv,tid)
-        self.insertPkgIntoTariff(pidmov,tid)
+        self.insertPkgIntoTariff(pidtv,tid,False)
+        self.insertPkgIntoTariff(pidmov,tid,False)
         self.executeStatement("UPDATE users set tariff_plan_id = " + str(tid))
         
     def executeStatement(self,sql):
