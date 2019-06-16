@@ -28,7 +28,7 @@ class MinistraSQL(object):
               passwd=password,
               database="stalker_db"
             )
-        self.maxChan = self.getMaxChannel()
+        self.maxChannelCached = self.getMaxChannel()
         self.screenshotsDir="/var/www/html/stalker_portal/screenshots"
         
         
@@ -52,6 +52,8 @@ class MinistraSQL(object):
         pid = self.checkInsertPkg(self.prefix + "-" + itemGroup,False,"tv")
         self.insertPkgIntoTariff(pid,tid,True)
         maxCh = self.getMaxChannel()
+        if (maxCh < self.maxChannelCached):
+            maxCh = self.maxChannelCached
         
         #check if we have previously set a channel number in previous run cache.
         if("tv" + itemGroup + itemName in self.chanCache):
