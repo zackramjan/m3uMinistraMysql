@@ -187,7 +187,8 @@ class MinistraSQL(object):
             self.myCon.commit() 
         
     def insertMovie(self, itemID,itemName, itemGroup, itemLink, itemPic):
-        
+        if not itemGroup:
+            itemGroup="Misc"
         #check if channel already exits
         query = "select id from video where name = %s AND path = %s"
         values = (itemName,itemLink)
