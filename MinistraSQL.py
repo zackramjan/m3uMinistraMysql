@@ -54,7 +54,7 @@ class MinistraSQL(object):
         maxCh = self.getMaxChannel()
         
         #check if we have previously set a channel number in previous run cache.
-        if(self.chanCache["tv" + itemGroup + itemName]):
+        if("tv" + itemGroup + itemName in self.chanCache):
             maxCh = self.chanCache["tv" + itemGroup + itemName]
         
         self.chanCache["tv" + itemGroup + itemName] = maxCh;
