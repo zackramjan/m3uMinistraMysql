@@ -5,6 +5,10 @@ Created on May 27, 2019
 '''
 
 import mysql.connector
+import pickle
+import subprocess
+import os
+import re
 
 
 class MinistraSQL(object):
@@ -17,12 +21,16 @@ class MinistraSQL(object):
         Constructor
         '''
         self.prefix = prefixIn
+        self.chanCache = {}
         self.myCon = mysql.connector.connect(
               host=dbhost,
               user=username,
               passwd=password,
               database="stalker_db"
             )
+        self.maxChan = self.getMaxChannel()
+        self.screenshotsDir="/var/www/html/stalker_portal/screenshots/1"
+        
         
     def insertChannel(self, itemID,itemName, itemGroup, itemLink, itemPic):
         #check if channel already exits
@@ -44,6 +52,12 @@ class MinistraSQL(object):
         pid = self.checkInsertPkg(self.prefix + "-" + itemGroup,False,"tv")
         self.insertPkgIntoTariff(pid,tid,True)
         maxCh = self.getMaxChannel()
+        
+        #check if we have previously set a channel number in previous run cache.
+        if(self.chanCache["tv" + itemGroup + itemName]):
+            maxCh = self.chanCache["tv" + itemGroup + itemName]
+        
+        self.chanCache["tv" + itemGroup + itemName] = maxCh;
         
         #add the channel
         query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id) VALUES( %s, %s, %s, 1, %s, %s)"
@@ -201,6 +215,19 @@ class MinistraSQL(object):
         cursor.execute(query, values)
         self.myCon.commit()
         
+        #add movie screenshot
+        screenshot = self.screenshotsDir + "/" + re.sub('[^0-9a-zA-Z]+', '_', itemGroup + itemName)
+        if(itemPic and not os.path.isfile(screenshot)):
+            subprocess.call("curl -o \"" + screenshot + "\"" " \"" + itemPic + "\"" , shell=True)
+             
+        if(os.path.isfile(screenshot)):
+            query = "INSERT IGNORE INTO screenshots (id,type,media_id) VALUES( %s, %s, %s)"
+            values = (vidId,"image/jpeg",vidId)
+            cursor = self.myCon.cursor()
+            cursor.execute(query, values)
+            self.myCon.commit()
+            subprocess.call("ln -s \"" + screenshot + "\"" " \"" + vidId + ".jpg\"" , shell=True)                
+        
     def checkInsertVideoCat(self,genre):
         maxGen = self.getMaxMovieCat()
         query = "INSERT IGNORE INTO media_category (category_name,category_alias,num) VALUES (%s,%s,%s)"
@@ -249,6 +276,7 @@ class MinistraSQL(object):
         self.executeStatement("delete from video_series_files")
         self.executeStatement("delete from media_category")
         self.executeStatement("delete from cat_genre")
+        self.executeStatement("delete from screenshots")
         
     def insertAllChannelsAndMoviesForAllUsers(self):
         print "adding allmovies and allchannels as main tariff for all users"
@@ -263,4 +291,13 @@ class MinistraSQL(object):
         cursor = self.myCon.cursor()
         cursor.execute(sql)
         self.myCon.commit()  
-            
+    
+    def loadCache(self):
+        with open('MinistraSQL.cache', 'rb') as handle:
+            self.chanCache = pickle.load(handle)
+       
+    def saveCache(self):
+        with open('MinistraSQL.cache', 'wb') as handle:
+            pickle.dump(self.chanCache, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+                

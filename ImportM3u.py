@@ -66,6 +66,7 @@ def main(argv=None):
             
     
     sql.insertAllChannelsAndMoviesForAllUsers()
+    sql.saveCache()
                 
 
 
