@@ -28,7 +28,7 @@ class MinistraSQL(object):
               passwd=password,
               database="stalker_db"
             )
-        self.maxChannelCached = self.getMaxChannel()
+        self.maxChannelCached = self.getMaxChannel() + 1
         self.screenshotsDir="/var/www/html/stalker_portal/screenshots"
         
         
