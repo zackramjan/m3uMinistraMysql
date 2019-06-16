@@ -30,7 +30,7 @@ class MinistraSQL(object):
             )
         self.maxChannelCached = self.getMaxChannel() + 1
         self.screenshotsDir="/var/www/html/stalker_portal/screenshots"
-        
+        self.loadCache()
         
     def insertChannel(self, itemID,itemName, itemGroup, itemLink, itemPic):
         #check if channel already exits
@@ -57,7 +57,7 @@ class MinistraSQL(object):
         
         #check if we have previously set a channel number in previous run cache.
         if("tv" + itemGroup + itemName in self.chanCache):
-            print "\tfound cached channel"
+            #print "\tfound cached channel"
             maxCh = self.chanCache["tv" + itemGroup + itemName]
         
         self.chanCache["tv" + itemGroup + itemName] = maxCh;
