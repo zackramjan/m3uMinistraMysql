@@ -227,7 +227,7 @@ class MinistraSQL(object):
             cursor.execute(query, values)
             self.myCon.commit()
             imageDir = -((-1 * vidId) // 100)
-            subprocess.call("mkdir \"" + self.screenshotsDir + "/" + str(imageDir) + "\"")
+            subprocess.call("mkdir -p \"" + self.screenshotsDir + "/" + str(imageDir) + "\"")
             subprocess.call("ln -s \"" + screenshot + "\"" " \"" + self.screenshotsDir + "/" + str(imageDir) + "/" + str(vidId) + ".jpg\"" , shell=True)                
         
     def checkInsertVideoCat(self,genre):
