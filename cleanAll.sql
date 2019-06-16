@@ -11,3 +11,4 @@ delete from video;
 delete from video_series_files;
 delete from media_category;
 delete from cat_genre;
+delete from screenshots;
