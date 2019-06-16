@@ -29,7 +29,7 @@ class MinistraSQL(object):
               database="stalker_db"
             )
         self.maxChan = self.getMaxChannel()
-        self.screenshotsDir="/var/www/html/stalker_portal/screenshots/1"
+        self.screenshotsDir="/var/www/html/stalker_portal/screenshots"
         
         
     def insertChannel(self, itemID,itemName, itemGroup, itemLink, itemPic):
@@ -226,6 +226,8 @@ class MinistraSQL(object):
             cursor = self.myCon.cursor()
             cursor.execute(query, values)
             self.myCon.commit()
+            imageDir = -((-1 * vidId) / 100)
+            subprocess.call("mkdir \"" + self.screenshotsDir + "/" + imageDir + "\"")
             subprocess.call("ln -s \"" + screenshot + "\"" " \"" + self.screenshotsDir + "/" +str(vidId) + ".jpg\"" , shell=True)                
         
     def checkInsertVideoCat(self,genre):
