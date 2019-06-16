@@ -226,7 +226,7 @@ class MinistraSQL(object):
             cursor = self.myCon.cursor()
             cursor.execute(query, values)
             self.myCon.commit()
-            subprocess.call("ln -s \"" + screenshot + "\"" " \"" + str(vidId) + ".jpg\"" , shell=True)                
+            subprocess.call("ln -s \"" + screenshot + "\"" " \"" + self.screenshotsDir + "/" +str(vidId) + ".jpg\"" , shell=True)                
         
     def checkInsertVideoCat(self,genre):
         maxGen = self.getMaxMovieCat()
