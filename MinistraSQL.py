@@ -299,8 +299,9 @@ class MinistraSQL(object):
         self.myCon.commit()  
     
     def loadCache(self):
-        with open('MinistraSQL.cache', 'rb') as handle:
-            self.chanCache = pickle.load(handle)
+        if(os.path.isfile("MinistraSQL.cache")):
+            with open('MinistraSQL.cache', 'rb') as handle:
+                self.chanCache = pickle.load(handle)
        
     def saveCache(self):
         with open('MinistraSQL.cache', 'wb') as handle:
