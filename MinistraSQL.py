@@ -64,16 +64,16 @@ class MinistraSQL(object):
         self.chanCache["tv" + itemGroup + itemName] = maxCh;
         
         #add channel logo
-        logoFile = re.sub('[^0-9a-zA-Z]+', '_', itemGroup + itemName + ".jpg")
+        logoFile = re.sub('[^0-9a-zA-Z]+', '_', itemGroup + itemName) + ".jpg"
         logoPath = self.logoDir + "/original/" + logoFile
         
         if(itemPic and not os.path.isfile(logoPath)):
             subprocess.call("curl -o \"" + logoPath + "\"" " \"" + itemPic + "\"" , shell=True)
             #convert "input.jpg" -resize 500x500! -quality 100 "output.png""
-            subprocess.call("convert \"" + logoPath + "\"" + "-resize 36x36! -quality 100  \"" + self.logoDir + "/120/" + logoFile + "\"" , shell=True)
-            subprocess.call("convert \"" + logoPath + "\"" + "-resize 48x48! -quality 100  \"" + self.logoDir + "/160/" + logoFile + "\"" , shell=True)
-            subprocess.call("convert \"" + logoPath + "\"" + "-resize 72x72! -quality 100  \"" + self.logoDir + "/240/" + logoFile + "\"" , shell=True)
-            subprocess.call("convert \"" + logoPath + "\"" + "-resize 96x96! -quality 100  \"" + self.logoDir + "/320/" + logoFile + "\"" , shell=True)
+            subprocess.call("convert \"" + logoPath + "\"" + " -resize 36x36! -quality 100  \"" + self.logoDir + "/120/" + logoFile + "\"" , shell=True)
+            subprocess.call("convert \"" + logoPath + "\"" + " -resize 48x48! -quality 100  \"" + self.logoDir + "/160/" + logoFile + "\"" , shell=True)
+            subprocess.call("convert \"" + logoPath + "\"" + " -resize 72x72! -quality 100  \"" + self.logoDir + "/240/" + logoFile + "\"" , shell=True)
+            subprocess.call("convert \"" + logoPath + "\"" + " -resize 96x96! -quality 100  \"" + self.logoDir + "/320/" + logoFile + "\"" , shell=True)
             
              
         if not os.path.isfile(logoPath):
