@@ -68,7 +68,7 @@ class MinistraSQL(object):
         logoPath = self.logoDir + "/original/" + logoFile
         
         if(itemPic and not os.path.isfile(logoPath)):
-            subprocess.call("curl -m 30 -o \"" + logoPath + "\"" " \"" + itemPic + "\"" , shell=True)
+            subprocess.call("curl -m 10 -o \"" + logoPath + "\"" " \"" + itemPic + "\"" , shell=True)
             #convert "input.jpg" -resize 500x500! -quality 100 "output.png""
             subprocess.call("convert \"" + logoPath + "\"" + " -resize 36x36! -quality 100  \"" + self.logoDir + "/120/" + logoFile + "\"" , shell=True)
             subprocess.call("convert \"" + logoPath + "\"" + " -resize 48x48! -quality 100  \"" + self.logoDir + "/160/" + logoFile + "\"" , shell=True)
@@ -240,7 +240,7 @@ class MinistraSQL(object):
         #add movie screenshot
         screenshot = self.screenshotsDir + "/" + re.sub('[^0-9a-zA-Z]+', '_', itemGroup + itemName)
         if(itemPic and not os.path.isfile(screenshot)):
-            subprocess.call("curl -m 30 -o \"" + screenshot + "\"" " \"" + itemPic + "\"" , shell=True)
+            subprocess.call("curl -m 10 -o \"" + screenshot + "\"" " \"" + itemPic + "\"" , shell=True)
              
         if(os.path.isfile(screenshot)):
             query = "INSERT IGNORE INTO screenshots (id,type,media_id) VALUES( %s, %s, %s)"
