@@ -240,7 +240,7 @@ class MinistraSQL(object):
         #add movie screenshot
         screenshot = self.screenshotsDir + "/" + re.sub('[^0-9a-zA-Z]+', '_', itemGroup + itemName)
         if(itemPic and not os.path.isfile(screenshot)):
-            subprocess.call("curl -o \"" + screenshot + "\"" " \"" + itemPic + "\"" , shell=True)
+            subprocess.call("curl -m 30 -o \"" + screenshot + "\"" " \"" + itemPic + "\"" , shell=True)
              
         if(os.path.isfile(screenshot)):
             query = "INSERT IGNORE INTO screenshots (id,type,media_id) VALUES( %s, %s, %s)"
