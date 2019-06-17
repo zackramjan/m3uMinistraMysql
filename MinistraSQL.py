@@ -76,7 +76,7 @@ class MinistraSQL(object):
             subprocess.call("convert \"" + logoPath + "\"" + " -resize 96x96! -quality 100  \"" + self.logoDir + "/320/" + logoFile + "\"" , shell=True)
             
              
-        if not os.path.isfile(logoPath):
+        if not os.path.isfile(self.logoDir + "/120/" + logoFile):
             logoFile = ""      
         
         xmlID = self.prefix +  itemID
