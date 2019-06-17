@@ -30,6 +30,7 @@ class MinistraSQL(object):
             )
         self.maxChannelCached = self.getMaxChannel() + 1
         self.screenshotsDir="/var/www/html/stalker_portal/screenshots"
+        self.logoDir="/var/www/html/stalker_portal/misc/logos"
         self.loadCache()
         
     def insertChannel(self, itemID,itemName, itemGroup, itemLink, itemPic):
@@ -62,12 +63,29 @@ class MinistraSQL(object):
         
         self.chanCache["tv" + itemGroup + itemName] = maxCh;
         
-        #add the channel
-        query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id) VALUES( %s, %s, %s, 1, %s, %s)"
+        #add channel logo
+        logoFile = re.sub('[^0-9a-zA-Z]+', '_', itemGroup + itemName + ".jpg")
+        logoPath = self.logoDir + "/original/" + logoFile
+        
+        if(itemPic and not os.path.isfile(logoPath)):
+            subprocess.call("curl -o \"" + logoPath + "\"" " \"" + itemPic + "\"" , shell=True)
+            #convert "input.jpg" -resize 500x500! -quality 100 "output.png""
+            subprocess.call("convert \"" + logoPath + "\"" + "-resize 36x36! -quality 100  \"" + self.logoDir + "/120/" + logoFile + "\"" , shell=True)
+            subprocess.call("convert \"" + logoPath + "\"" + "-resize 48x48! -quality 100  \"" + self.logoDir + "/160/" + logoFile + "\"" , shell=True)
+            subprocess.call("convert \"" + logoPath + "\"" + "-resize 72x72! -quality 100  \"" + self.logoDir + "/240/" + logoFile + "\"" , shell=True)
+            subprocess.call("convert \"" + logoPath + "\"" + "-resize 96x96! -quality 100  \"" + self.logoDir + "/320/" + logoFile + "\"" , shell=True)
+            
+             
+        if not os.path.isfile(logoPath):
+            logoFile = ""      
+        
         xmlID = self.prefix +  itemID
         if not itemID:
-            xmlID = ""     
-        values = (itemName, maxCh, itemLink, gid, xmlID)
+            xmlID = ""         
+        
+        #add the channel
+        query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id,logo) VALUES( %s, %s, %s, 1, %s, %s, %s)"
+        values = (itemName, maxCh, itemLink, gid, xmlID,logoFile)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         chId = cursor.lastrowid
