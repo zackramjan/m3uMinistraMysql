@@ -68,7 +68,7 @@ class MinistraSQL(object):
         logoPath = self.logoDir + "/original/" + logoFile
         
         if(itemPic and not os.path.isfile(logoPath)):
-            subprocess.call("curl -o \"" + logoPath + "\"" " \"" + itemPic + "\"" , shell=True)
+            subprocess.call("curl -m 30 -o \"" + logoPath + "\"" " \"" + itemPic + "\"" , shell=True)
             #convert "input.jpg" -resize 500x500! -quality 100 "output.png""
             subprocess.call("convert \"" + logoPath + "\"" + " -resize 36x36! -quality 100  \"" + self.logoDir + "/120/" + logoFile + "\"" , shell=True)
             subprocess.call("convert \"" + logoPath + "\"" + " -resize 48x48! -quality 100  \"" + self.logoDir + "/160/" + logoFile + "\"" , shell=True)
