@@ -34,6 +34,8 @@ class MinistraSQL(object):
         self.loadCache()
         
     def insertChannel(self, itemID,itemName, itemGroup, itemLink, itemPic):
+        if not itemGroup:
+            itemGroup="Misc"
         #check if channel already exits
         query = "select id from itv where name = %s AND cmd = %s"
         values = (itemName,itemLink)
