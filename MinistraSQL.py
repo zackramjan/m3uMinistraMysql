@@ -9,7 +9,7 @@ import pickle
 import subprocess
 import os
 import re
-
+import time
 
 class MinistraSQL(object):
     '''
@@ -20,6 +20,7 @@ class MinistraSQL(object):
         '''
         Constructor
         '''
+        self.curDateTime = time.strftime('%Y-%m-%d %H:%M:%S')
         self.prefix = prefixIn
         self.chanCache = {}
         self.myCon = mysql.connector.connect(
@@ -42,8 +43,16 @@ class MinistraSQL(object):
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         cursor.fetchone()   
+
+        #we already have this channel so update the timestamp.
         if (cursor.rowcount > 0):
             print "   Skipping Channel [" +itemGroup + "] " +itemName + " : " + itemLink + "  (already inserted)"
+            query = "update itv set modified = %s where name = %s AND cmd = %s"
+            values = (self.curDateTime,itemName,itemLink)
+            cursor.execute(query, values)
+            cursor = self.myCon.cursor()
+            cursor.execute(query, values)
+            self.myCon.commit()
             return
         else:
             print "Inserting Channel [" +itemGroup + "] " +itemName + " : " + itemLink 
@@ -86,8 +95,8 @@ class MinistraSQL(object):
             xmlID = ""         
         
         #add the channel
-        query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id,logo) VALUES( %s, %s, %s, 1, %s, %s, %s)"
-        values = (itemName, maxCh, itemLink, gid, xmlID,logoFile)
+        query = "INSERT IGNORE INTO itv (name,number,cmd,base_ch,tv_genre_id,xmltv_id,logo,modified) VALUES( %s, %s, %s, 1, %s, %s, %s, %s)"
+        values = (itemName, maxCh, itemLink, gid, xmlID,logoFile,self.curDateTime)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         chId = cursor.lastrowid
@@ -217,6 +226,12 @@ class MinistraSQL(object):
         cursor.fetchone()   
         if (cursor.rowcount > 0):
             print "   Skipping Movie [" +itemGroup + "] " + itemName + " : " +itemLink + "  (already inserted)"
+            query = "update video set added = %s where name = %s AND path = %s"
+            values = (self.curDateTime,itemName,itemLink)
+            cursor.execute(query, values)
+            cursor = self.myCon.cursor()
+            cursor.execute(query, values)
+            self.myCon.commit()
             return
         else:
             print "Inserting Movie [" +itemGroup + "] " + itemName + " : " +itemLink 
@@ -225,8 +240,8 @@ class MinistraSQL(object):
         gid = self.getVideoCatID(itemGroup)
         
         #add the movie
-        query = "INSERT IGNORE INTO video (name,o_name,path,category_id,status,autocomplete_provider,protocol,accessed,added) VALUES( %s, %s, %s, %s, %s, %s,%s,%s,CURDATE())"
-        values = (itemName,itemName,itemLink, gid,1,"tmdb","",1)
+        query = "INSERT IGNORE INTO video (name,o_name,path,category_id,status,autocomplete_provider,protocol,accessed,added) VALUES( %s, %s, %s, %s, %s, %s,%s,%s,%s)"
+        values = (itemName,itemName,itemLink, gid,1,"tmdb","",1,self.curDateTime)
         cursor = self.myCon.cursor()
         cursor.execute(query, values)
         vidId = cursor.lastrowid
