@@ -309,7 +309,6 @@ class MinistraSQL(object):
         self.executeStatement("delete from ch_links")
         self.executeStatement("delete from tv_genre")
         self.executeStatement("delete from service_in_package")
-        self.executeStatement("delete from ch_links")
         self.executeStatement("delete from played_itv")
         
     def cleanMovies(self):
