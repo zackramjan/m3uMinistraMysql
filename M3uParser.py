@@ -52,7 +52,7 @@ class M3uParser:
     def manageLine(self, n):
         lineInfo = self.lines[n]
         lineLink = self.lines[n+1]
-        if lineInfo != "#EXTM3U":
+        if not lineInfo.startswith("#EXTM3U"):
             m = re.search("tvg-name=\"(.*?)\"", lineInfo, re.IGNORECASE)
             name = m.group(1)
             m = re.search("tvg-ID=\"(.*?)\"", lineInfo, re.IGNORECASE)
