@@ -11,6 +11,8 @@ import os
 import argparse
 import re
 import xml.etree.cElementTree as ET
+from datetime import datetime
+import traceback
 
 def main(argv=None): 
     parser = argparse.ArgumentParser(description='Process import args.')
@@ -43,18 +45,26 @@ def main(argv=None):
         for j in filterList:
             m = re.search(j,i["tvg-name"])
             if m:
-                print "#EXTINF:-1 tvg-id=\"" + i["tvg-ID"] + "\" tvg-name=\"" + i["tvg-name"] + "\" tvg-logo=\"" + i["tvg-logo"] + "\" group-title=\"" + i["tvg-group"] + "\"," + i["tvg-name"] 
+                program = findGuide(guide,i["tvg-ID"], tree)
+                print "#EXTINF:-1 tvg-id=\"" + i["tvg-ID"] + "\" tvg-name=\"" + i["tvg-name"] + " - " + program + "\" tvg-logo=\"" + i["tvg-logo"] + "\" group-title=\"" + i["tvg-group"] + "\"," + i["tvg-name"] + " - " + program
                 print i["link"]
-                findGuide(guide,i["tvg-ID"], tree)
                 
 def findGuide(guide, id, tree):
-    if not id: return
+    if not id: return ""
+    date = datetime.today().strftime('%Y%m%d%H%M%S')
     try: 
         t = tree.findall("programme[@channel='" +id + "']")
         for i in t: 
             #print(ET.dump(i));
-            print i.find("title").text
-    except: print "hello"
+            start = re.search("^\d+",i.get("start")).group(0)
+            stop = re.search("^\d+",i.get("stop")).group(0)
+            program =  i.find("title").text
+            program = program.encode('ascii',errors='ignore')
+            #print "      " + program + " " + start + " " + stop + " : " + date 
+            if(int(date) > int(start) and int(date) < int(stop)): return program
+    except: return ""
+    return ""
+    #except: traceback.print_exc(file=sys.stdout) 
     #m = re.search("(<programme start.*?channel=." + id + ".*?/programme>)",guide)
     #m = re.findall("<programme start=\"\d+ .\d+\" stop=\"\d+ .\d+\" channel=\"" + id + "\".*?\/programme>",guide)
 
