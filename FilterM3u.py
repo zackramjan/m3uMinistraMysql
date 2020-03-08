@@ -46,6 +46,7 @@ def main(argv=None):
             m = re.search(j,i["tvg-name"])
             if m:
                 program = findGuide(guide,i["tvg-ID"], tree)
+                if not program: program = i["tvg-name"]
                 print "#EXTINF:-1 tvg-id=\"" + i["tvg-ID"] + "\" tvg-name=\"" + i["tvg-name"] + " - " + program + "\" tvg-logo=\"" + i["tvg-logo"] + "\" group-title=\"" + i["tvg-group"] + "\"," + i["tvg-name"] + " - " + program
                 print i["link"]
                 
