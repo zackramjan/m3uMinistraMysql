@@ -41,11 +41,12 @@ def main(argv=None):
     
     print "#EXTM3U"
     for i in myM3u.getList():
+        program = findGuide(guide,i["tvg-ID"], tree)
     #sql.insertChannel(i["tvg-ID"],i["tvg-name"] + args.channel, genre, i["link"], i["tvg-logo"])
         for j in filterList:
             m = re.search(j,i["tvg-name"])
-            if m:
-                program = findGuide(guide,i["tvg-ID"], tree)
+            m2 = re.search(j,program)
+            if m or m2:
                 if not program: program = i["tvg-name"]
                 print "#EXTINF:-1 tvg-id=\"" + i["tvg-ID"] + "\" tvg-name=\"" + i["tvg-name"] + " - " + program + "\" tvg-logo=\"" + i["tvg-logo"] + "\" group-title=\"" + i["tvg-group"] + "\"," + i["tvg-name"] + " - " + program
                 print i["link"]
